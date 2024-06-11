@@ -10,13 +10,22 @@ function NewsBoard({ category }) {
         const fetchNews = async () => {
             try {
                 const url = `https://newsapi.org/v2/top-headlines?country=in&category=${category}&apiKey=b14177d92d114db59e3d89728a53fc83`;
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                });
                 if (response.data.status !== "ok") {
                     throw new Error(`Error from API: ${response.data.message}`);
                 }
                 setArticles(response.data.articles);
             } catch (error) {
-                setError(error.message);
+                if (error.response && error.response.status === 426) {
+                    setError("The server requires the client to upgrade the protocol. Please check the server configuration.");
+                } else {
+                    setError(error.message);
+                }
                 console.error('Error fetching the news:', error);
             }
         };

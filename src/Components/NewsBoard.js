@@ -22,8 +22,19 @@ function NewsBoard({ category }) {
                     }
                     setArticles(response.data.articles);
                 } catch (error) {
-                    console.error('Error fetching the news:', error);
-                    setError(error.message || "An unexpected error occurred");
+                    if (error.response) {
+                        console.error('Error response:', error.response.data);
+                        console.error('Error status:', error.response.status);
+                        console.error('Error headers:', error.response.headers);
+                        setError(`Error: ${error.response.status} ${error.response.statusText}`);
+                    } else if (error.request) {
+                        console.error('Error request:', error.request);
+                        setError("No response received from the server.");
+                    } else {
+                        console.error('Error message:', error.message);
+                        setError(`Error: ${error.message}`);
+                    }
+                    console.error('Error config:', error.config);
                 }
             };
 
